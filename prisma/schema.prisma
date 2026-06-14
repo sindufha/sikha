@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  GURU
+}
+
+enum StatusPresensi {
+  HADIR
+  IZIN
+  SAKIT
+  ALFA
+  TERLAMBAT
+}
+
+enum JenisKelamin {
+  LAKI_LAKI
+  PEREMPUAN
+}
+
+enum Semester {
+  GANJIL
+  GENAP
+}
+
+enum AksiAudit {
+  LOGIN
+  LOGOUT
+  CREATE_USER
+  UPDATE_USER
+  DELETE_USER
+  CREATE_SISWA
+  UPDATE_SISWA
+  DELETE_SISWA
+  CREATE_KELAS
+  UPDATE_KELAS
+  DELETE_KELAS
+  CREATE_PRESENSI
+  UPDATE_PRESENSI
+  DELETE_PRESENSI
+  UPDATE_JAM_PRESENSI
+  RESET_PASSWORD
+}
+
+model AuditLog {
+  id        String     @id @default(cuid())
+  userId    String?
+  user      User?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  aksi      AksiAudit
+  deskripsi String?
+  detail    Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime   @default(now())
+
+  @@index([userId])
+  @@index([aksi])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      Role
+  nama      String
+  isActive  Boolean  @default(true)
+  lastLogin DateTime?
+  kelas     Kelas[]  @relation("WaliKelas")
+  auditLogs AuditLog[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([role])
+  @@map("users")
+}
+
+model TahunAjaran {
+  id        String         @id @default(cuid())
+  tahun     String
+  semester  Semester
+  isActive  Boolean        @default(false)
+  tanggalMulai DateTime
+  tanggalSelesai DateTime
+  kelas     Kelas[]
+  presensi  Presensi[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([tahun, semester])
+  @@index([isActive])
+  @@map("tahun_ajaran")
+}
+
+model Kelas {
+  id           String   @id @default(cuid())
+  nama         String
+  tahunAjaranId String?
+  tahunAjaran  TahunAjaran? @relation(fields: [tahunAjaranId], references: [id], onDelete: SetNull)
+  waliKelasId  String?
+  waliKelas    User?    @relation("WaliKelas", fields: [waliKelasId], references: [id], onDelete: SetNull)
+  siswa        Siswa[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([nama, tahunAjaranId])
+  @@index([waliKelasId])
+  @@index([tahunAjaranId])
+  @@map("kelas")
+}
+
+model Siswa {
+  id           String       @id @default(cuid())
+  nis          String       @unique
+  nisn         String?
+  nama         String
+  jenisKelamin JenisKelamin?
+  tempatLahir  String?
+  tanggalLahir DateTime?    @db.Date
+  alamat       String?
+  namaAyah     String?
+  namaIbu      String?
+  noTelpOrtu   String?
+  tahunMasuk   Int?
+  kelasId      String
+  kelas        Kelas        @relation(fields: [kelasId], references: [id], onDelete: Restrict)
+  qrCode       String       @unique @default(cuid())
+  isActive     Boolean      @default(true)
+  presensi     Presensi[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([kelasId])
+  @@index([nama])
+  @@index([nisn])
+  @@map("siswa")
+}
+
+model JamPresensi {
+  id             String   @id @default(cuid())
+  jamMasuk       String   @db.VarChar(5)
+  toleransiMenit Int      @default(15)
+  jamPulang      String?  @db.VarChar(5)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("jam_presensi")
+}
+
+model Presensi {
+  id          String          @id @default(cuid())
+  siswaId     String
+  siswa       Siswa           @relation(fields: [siswaId], references: [id], onDelete: Cascade)
+  kelasId     String?
+  tanggal     DateTime        @db.Date
+  status      StatusPresensi
+  jamDatang   DateTime?
+  jamPulang   DateTime?
+  keterangan  String?
+  tahunAjaranId String?
+  tahunAjaran TahunAjaran?    @relation(fields: [tahunAjaranId], references: [id], onDelete: SetNull)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@unique([siswaId, tanggal])
+  @@index([tanggal])
+  @@index([siswaId])
+  @@index([status])
+  @@index([tanggal, status])
+  @@index([kelasId, tanggal])
+  @@index([tahunAjaranId])
+  @@map("presensi")
+}

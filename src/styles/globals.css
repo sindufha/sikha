@@ -1,0 +1,262 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+@theme {
+  /* ── Primary palette ── */
+  --color-primary: #3B82F6;
+  --color-primary-light: #60A5FA;
+  --color-primary-dark: #1D4ED8;
+  --color-primary-50: #EFF6FF;
+  --color-primary-100: #DBEAFE;
+
+  /* ── Secondary / accent ── */
+  --color-secondary: #6366F1;
+  --color-secondary-light: #E0E7FF;
+  --color-secondary-dark: #4338CA;
+
+  /* ── Surface / bg ── */
+  --color-background: #F1F5F9;
+  --color-surface: #FFFFFF;
+  --color-sidebar: #0F172A;
+  --color-sidebar-hover: #1E293B;
+  --color-sidebar-active: rgba(59, 130, 246, 0.15);
+
+  /* ── Text ── */
+  --color-text: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94A3B8;
+  --color-text-inverse: #F8FAFC;
+
+  /* ── Borders ── */
+  --color-border: #E2E8F0;
+
+  /* ── Semantic ── */
+  --color-success: #059669;
+  --color-success-bg: #ECFDF5;
+  --color-success-text: #047857;
+  --color-warning: #D97706;
+  --color-warning-bg: #FFFBEB;
+  --color-warning-text: #B45309;
+  --color-error: #DC2626;
+  --color-error-bg: #FEF2F2;
+  --color-error-text: #B91C1C;
+  --color-info: #2563EB;
+  --color-info-bg: #EFF6FF;
+  --color-info-text: #1D4ED8;
+
+  /* ── Fonts ── */
+  --font-family-heading: "Plus Jakarta Sans", sans-serif;
+  --font-family-body: "Inter", sans-serif;
+
+  /* ── Shadows ── */
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-dropdown: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+
+  /* ── Radius ── */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+}
+
+/* ── Base Styles ── */
+@layer base {
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    font-family: var(--font-family-body);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--color-text);
+  }
+
+  h1 { font-size: clamp(1.5rem, 1.2rem + 0.8vw, 2rem); line-height: 1.25; }
+  h2 { font-size: clamp(1.25rem, 1rem + 0.5vw, 1.5rem); line-height: 1.3; }
+  h3 { font-size: 1.1rem; line-height: 1.4; }
+
+  ::selection {
+    background-color: var(--color-primary);
+    color: white;
+  }
+}
+
+/* ── Component Classes ── */
+@layer components {
+  /* ── Card ── */
+  .card {
+    @apply bg-white rounded-xl shadow-card border border-border/60 p-5 transition-all duration-200;
+  }
+  .card-hover:hover {
+    @apply shadow-card-hover border-primary-100;
+  }
+
+  /* ── Card Button (clickable nav) ── */
+  .card-button {
+    @apply w-full text-left cursor-pointer bg-white rounded-xl shadow-card border border-border/60 p-5
+           transition-all duration-200 hover:shadow-card-hover hover:border-primary-100;
+  }
+
+  /* ── Animation: fade + slide up ── */
+  .animate-in {
+    animation: fadeSlideUp 0.35s ease-out forwards;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in-delay-1 { animation-delay: 0.05s; }
+  .animate-in-delay-2 { animation-delay: 0.1s; }
+  .animate-in-delay-3 { animation-delay: 0.15s; }
+
+  /* ── Page elements ── */
+  .page-header { @apply flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between; }
+  .page-title  { @apply text-2xl font-bold tracking-tight; }
+  .page-desc   { @apply text-text-secondary text-sm mt-0.5; }
+
+  /* ── Toolbar row ── */
+  .toolbar-row   { @apply flex flex-col gap-3 sm:flex-row sm:items-end; }
+  .toolbar-actions { @apply flex flex-wrap gap-2; }
+
+  /* ── Form elements ── */
+  .input {
+    @apply w-full h-10 px-3.5 py-2 rounded-lg border border-border bg-white text-sm text-text
+           placeholder:text-text-muted/60 transition-all duration-150
+           focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15;
+  }
+  .input-error {
+    @apply border-error/70 focus:border-error focus:ring-2 focus:ring-error/15;
+  }
+  .input:disabled { @apply bg-gray-50 text-text-muted cursor-not-allowed; }
+
+  .label { @apply block text-sm font-semibold text-text-secondary mb-1.5; }
+
+  .select {
+    @apply w-full h-10 rounded-lg border border-border bg-white text-sm text-text
+           transition-all duration-150 cursor-pointer appearance-none
+           focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15;
+    padding: 0.5rem 2.5rem 0.5rem 0.875rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%2364748B' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-position: right 0.7rem center;
+    background-repeat: no-repeat;
+    background-size: 1rem;
+  }
+  .select:disabled { @apply bg-gray-50 text-text-muted cursor-not-allowed; }
+
+  textarea.input { @apply h-auto min-h-[80px] py-2.5; }
+
+  /* ── Badge ── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold leading-5;
+  }
+  .badge-success  { @apply bg-success-bg text-success-text; }
+  .badge-warning  { @apply bg-warning-bg text-warning-text; }
+  .badge-error    { @apply bg-error-bg text-error-text; }
+  .badge-info     { @apply bg-info-bg text-info-text; }
+
+  /* ── Table ── */
+  .table-container {
+    @apply overflow-x-auto rounded-xl border border-border;
+  }
+  .table { @apply w-full text-sm; }
+  .table thead { @apply bg-slate-50; }
+  .table th {
+    @apply px-4 py-3 text-left text-xs font-bold tracking-wider text-text-secondary uppercase;
+  }
+  .table td {
+    @apply px-4 py-3.5 border-t border-border/60 align-middle;
+  }
+  .table tbody tr { @apply transition-colors duration-150; }
+  .table tbody tr:hover { @apply bg-primary-50/60; }
+  .table tbody tr:last-child td { @apply border-b-0; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50
+           animate-[fadeIn_0.15s_ease-out];
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal-content {
+    @apply bg-white rounded-2xl shadow-modal border border-border/60 w-full mx-4 max-h-[85vh] overflow-y-auto;
+    animation: modalSlideUp 0.2s ease-out;
+  }
+  @keyframes modalSlideUp {
+    from { opacity: 0; transform: scale(0.96) translateY(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  @keyframes scanLine {
+    0%, 100% { top: 8%; }
+    50% { top: 88%; }
+  }
+  .animate-scan-line {
+    animation: scanLine 2.5s ease-in-out infinite;
+  }
+
+  /* ── Sidebar nav links ── */
+  .sidebar-link {
+    @apply flex items-center gap-3.5 px-4 py-3.5 rounded-lg text-sm font-medium
+           transition-all duration-150 text-slate-300 hover:bg-sidebar-hover hover:text-white;
+  }
+  .sidebar-link-active {
+    @apply flex items-center gap-3.5 px-4 py-3.5 rounded-lg text-sm font-medium
+           transition-all duration-150 bg-sidebar-active text-white shadow-sm;
+  }
+
+  /* ── Action icon buttons ── */
+  .action-icon {
+    @apply inline-flex items-center justify-center rounded-lg p-2 transition-all duration-150
+           text-text-muted hover:bg-slate-100 hover:text-primary;
+  }
+  .action-icon-danger {
+    @apply inline-flex items-center justify-center rounded-lg p-2 transition-all duration-150
+           text-text-muted hover:bg-error-bg hover:text-error;
+  }
+
+  /* ── Gap for icon in button content ── */
+  .gap-inherit { gap: inherit; }
+
+  /* ── Modal footer ── */
+  .modal-footer {
+    @apply flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:justify-end;
+  }
+
+  /* ── Pagination ── */
+  .pagination-btn {
+    @apply inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-medium text-text-secondary
+           transition-all duration-150 hover:bg-slate-100 hover:text-text disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .pagination-btn-active {
+    @apply bg-primary text-white hover:bg-primary-dark hover:text-white;
+  }
+}
+
+/* ── Toast animations (managed by component but base keyframes here) ── */
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(100%); }
+}
+@keyframes toastProgress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
