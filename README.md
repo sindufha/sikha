@@ -8,6 +8,11 @@ Sikha adalah aplikasi presensi berbasis QR untuk admin, guru, dan siswa.
 - PostgreSQL
 - npm
 
+##Preview
+<img width="1280" height="585" alt="{53121D02-CDE1-4D39-9763-CC5A01245F8E}" src="https://github.com/user-attachments/assets/337669fa-9fcd-42b6-adf7-49f6e5b8de1a" />
+<br>
+<img width="1280" height="581" alt="{7BF9294C-301D-4817-8B38-685D64F350A6}" src="https://github.com/user-attachments/assets/efe67259-85c7-4686-aa51-ec4782359953" />
+
 ## Install
 
 ```bash
